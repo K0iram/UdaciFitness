@@ -5,6 +5,8 @@ import UdaciSlider from './UdaciSlider'
 import UdaciSteppers from './UdaciSteppers'
 import DateHeader from './DateHeader'
 import SubmitBtn from './SubmitBtn'
+import TextBtn from './TextBtn'
+import { Ionicons } from '@expo/vector-icons'
 
 
 class AddEntry extends Component {
@@ -20,7 +22,7 @@ class AddEntry extends Component {
     const { max, step } = getMetricMetaInfo(metric)
 
     this.setState((prevState) => {
-      const count = state[metric] + step
+      const count = prevState[metric] + step
 
       return {
         ...prevState,
@@ -31,7 +33,7 @@ class AddEntry extends Component {
 
   decrement = (metric) => {
     this.setState((prevState) => {
-      const count = state[metric] - getMetricMetaInfo(metric).step
+      const count = prevState[metric] - getMetricMetaInfo(metric).step
 
       return {
         ...prevState,
@@ -64,8 +66,28 @@ class AddEntry extends Component {
     }))
   }
 
+  reset = () => {
+    const key = timeToString()
+
+    //Update redux
+    //Navigate to home
+    //Save to Database
+  }
+
   render() {
     const metaInfo = getMetricMetaInfo()
+
+    if(this.props.alreadyLogged) {
+      return (
+        <View>
+          <Ionicons name='ios-happy-outline' size={100}/>
+          <Text>You Already Logged Today</Text>
+          <TextBtn onPress={this.reset}>
+            Reset
+          </TextBtn>
+        </View>
+      )
+    }
 
     return (
       <View>
