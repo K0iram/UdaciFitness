@@ -12,9 +12,9 @@ const entries = (state = {}, action) => {
         ...state,
         ...action.entry
       }
-    case default :
+    default :
       return state
   }
 }
 
-export const entries
+export default entries

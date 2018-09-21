@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { View, Text } from 'react-native'
-import { getMetricMetaInfo, timeToString } from '../utils/helpers'
+import { connect } from 'react-redux'
+import { addEntry } from '../actions'
+import { getMetricMetaInfo, timeToString, getDailyReminderValue } from '../utils/helpers'
 import UdaciSlider from './UdaciSlider'
 import UdaciSteppers from './UdaciSteppers'
 import DateHeader from './DateHeader'
@@ -8,6 +10,7 @@ import SubmitBtn from './SubmitBtn'
 import TextBtn from './TextBtn'
 import { submitEntry, removeEntry } from '../utils/api'
 import { Ionicons } from '@expo/vector-icons'
+
 
 
 class AddEntry extends Component {
@@ -54,6 +57,7 @@ class AddEntry extends Component {
     const entry = this.state
 
     //Update redux
+    this.props.onSubmit(key, entry)
 
     this.setState(() => ({
       run: 0,
@@ -74,11 +78,11 @@ class AddEntry extends Component {
   reset = () => {
     const key = timeToString()
 
-    removeEntry(key)
-
+    this.props.onReset(key)
     //Update redux
     //Navigate to home
     //Save to Database
+    removeEntry(key)
   }
 
   render() {
@@ -130,4 +134,23 @@ class AddEntry extends Component {
   }
 }
 
-export default AddEntry
+const mapStateToProps = (state) => {
+  const key = timeToString()
+
+  return {
+    alreadyLogged: state[key] && typeof state[key].today === 'undefined'
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onSubmit: (key, entry) => dispatch(addEntry({
+      [key]: entry
+    })),
+    onReset: (key) => dispatch(addEntry({
+      [key]: getDailyReminderValue()
+    }))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddEntry)
