@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, Platform, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 import { addEntry } from '../actions'
 import { getMetricMetaInfo, timeToString, getDailyReminderValue } from '../utils/helpers'
@@ -10,6 +10,7 @@ import SubmitBtn from './SubmitBtn'
 import TextBtn from './TextBtn'
 import { submitEntry, removeEntry } from '../utils/api'
 import { Ionicons } from '@expo/vector-icons'
+import { white } from '../utils/colors'
 
 
 
@@ -90,10 +91,10 @@ class AddEntry extends Component {
 
     if(this.props.alreadyLogged) {
       return (
-        <View>
-          <Ionicons name='ios-happy-outline' size={100}/>
+        <View style={styles.center}>
+          <Ionicons name={Platform.OS === 'ios' ? 'ios-happy-outline' : 'md-happy'} size={100}/>
           <Text>You Already Logged Today</Text>
-          <TextBtn onPress={this.reset}>
+          <TextBtn style={{padding: 10}} onPress={this.reset}>
             Reset
           </TextBtn>
         </View>
@@ -101,14 +102,14 @@ class AddEntry extends Component {
     }
 
     return (
-      <View>
+      <View style={styles.container}>
         <DateHeader date={(new Date()).toLocaleDateString()}/>
         {Object.keys(metaInfo).map((key) => {
           const { getIcon, type, ...rest } = metaInfo[key]
           const value = this.state[key]
 
           return (
-            <View key={key}>
+            <View key={key} style={styles.row}>
               {getIcon()}
               {type === 'slider' ?
                 <UdaciSlider
@@ -133,6 +134,27 @@ class AddEntry extends Component {
     )
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: white,
+  },
+  row: {
+    flexDirection: 'row',
+    flex: 1,
+    alignItems: 'center'
+
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 30,
+    marginLeft: 30
+  }
+})
 
 const mapStateToProps = (state) => {
   const key = timeToString()
