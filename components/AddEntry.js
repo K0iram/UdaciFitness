@@ -11,6 +11,7 @@ import TextBtn from './TextBtn'
 import { submitEntry, removeEntry } from '../utils/api'
 import { Ionicons } from '@expo/vector-icons'
 import { white } from '../utils/colors'
+import { NavigationActions } from 'react-navigation'
 
 
 
@@ -57,7 +58,6 @@ class AddEntry extends Component {
     const key = timeToString()
     const entry = this.state
 
-    //Update redux
     this.props.onSubmit(key, entry)
 
     this.setState(() => ({
@@ -68,22 +68,25 @@ class AddEntry extends Component {
       sleep: 0
     }))
 
-    //Navigate to home
+    this.toHome()
 
     submitEntry({ key, entry})
-
-    //Save to Database
-    //Clear Local Notifications
   }
 
   reset = () => {
     const key = timeToString()
 
     this.props.onReset(key)
-    //Update redux
-    //Navigate to home
-    //Save to Database
+
+    this.toHome()
+
     removeEntry(key)
+  }
+
+  toHome = () => {
+    this.props.navigation.dispatch(NavigationActions.back({
+      key: 'AddEntry'
+    }))
   }
 
   render() {
